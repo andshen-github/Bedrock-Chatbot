@@ -12,7 +12,7 @@ bedrock_url = os.getenv("BEDROCK_API_BASE")
 app = Flask(__name__)
 
 # This function takes a chat message as input, appends it to the messages list, sends the recent messages to the Bedrock API, and returns the assistant's response.
-def aoai_chat_model(chat):
+def bedrock_chat_model(chat):
     # Append the user's message to the messages list
     messages = chat
 
@@ -58,7 +58,7 @@ def callback():
 def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=aoai_chat_model(event.message.text))
+        TextSendMessage(text=bedrock_chat_model(event.message.text))
     )
 
 if __name__ == "__main__":
