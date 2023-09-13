@@ -1,5 +1,5 @@
 # MewBot - The Cat Expert
-
+ 
 MewBot is a LINE chatbot that knows everything about cats. It uses OpenAI's GPT-3 model to generate responses, making it a knowledgeable and engaging companion for all cat lovers. Whether you want to know about different cat breeds, understand cat behavior, or just hear some fun cat facts, MewBot is here to help!
 
 ## Setup
