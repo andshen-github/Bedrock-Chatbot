@@ -7,7 +7,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 # Set Bedrock API details
-bedrock_url = os.getenv("BEDROCK_API_BASE")
+#bedrock_url = os.getenv("BEDROCK_API_BASE")
 
 app = Flask(__name__)
 
