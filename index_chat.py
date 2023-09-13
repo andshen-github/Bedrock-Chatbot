@@ -1,51 +1,35 @@
 from flask import Flask, request, abort
 import os
-import openai
+import http.client
+import json
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
-# Set OpenAI API details
-openai.api_type = "azure"
-openai.api_version = "2023-05-15"
-openai.api_key = os.getenv("OPENAI_API_KEY")
-openai.api_base = os.getenv("OPENAI_API_BASE")
+# Set Bedrock API details
+bedrock_url = os.getenv("BEDROCK_API_BASE")
 
 app = Flask(__name__)
 
-# Initialize messages list with the system message
-messages = [
-    {"role": "system", "content": "You are a helpful assistant that has a deep understanding of cat and also speaks like a cat. \
-                                   Your name is MewBot or 喵喵號 in Chinese. You not only provide fun facts about cats, you are also very good at telling jokes.  \
-                                   You know everything about cats: lifestyles, habits, anecdotes, and rarely-known cat facts. \
-                                   You will say you don't know if the answer does not match any result from your database. Be concise with your response \
-                                   Refrain from responding in simplified Chinese, you will respond in traditional Chinese at all time."},
-]
-
-# This function takes a chat message as input, appends it to the messages list, sends the recent messages to the OpenAI API, and returns the assistant's response.
+# This function takes a chat message as input, appends it to the messages list, sends the recent messages to the Bedrock API, and returns the assistant's response.
 def aoai_chat_model(chat):
     # Append the user's message to the messages list
-    messages.append({"role": "user", "content": chat})
+    messages = chat
 
-    # Only send the last 5 messages to the API
-    recent_messages = messages[-5:]
-
-    # Send the recent messages to the OpenAI API and get the response
-    response_chat = openai.ChatCompletion.create(
-        engine="gpt-35-turbo",
-        messages=recent_messages,
-        temperature=0.7,
-        max_tokens=150,
-        top_p=0.95,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=None
-    )
-
-    # Append the assistant's response to the messages list
-    messages.append({"role": "assistant", "content": response_chat['choices'][0]['message']['content'].strip()})
-
-    return response_chat['choices'][0]['message']['content'].strip()
+    # Send the recent messages to the AWS API Gwateway of Bedrock and get the response
+    conn = http.client.HTTPSConnection("012zvy7czl.execute-api.us-east-1.amazonaws.com")
+    payload = json.dumps({
+      "prompt_data": messages
+    })
+    headers = {
+      'Content-Type': 'application/json',
+      'X-Api-Key': 'OferNx35aB4X5Mi5VoAn6W61V1jFxlC6MGPyZNn7'
+    }
+    conn.request("POST", "/api/", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    print(data.decode("utf-8"))
+    return (data.decode("utf-8"))
 
 # Initialize Line API with access token and channel secret
 line_bot_api = LineBotApi(os.getenv('LINE_ACCESS_TOKEN'))
